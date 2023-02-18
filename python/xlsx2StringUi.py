@@ -1,9 +1,10 @@
 import PySimpleGUI as sg
 from Xls2Strings import Xlsx2Strings as XS
 from Strings2Xls import Strings2Xlsx as SX
-import colorsys
+from Xml2Xls import Xml2Xlsx
+from Xls2Xml import Xlsx2Xml
 from Log import Log
-lista=['xlsxToStrings','stringsToXlsx']
+lista=['xlsxToStrings','stringsToXlsx','xlsxToxml','xmlToXlsx']
 layout=[
     [sg.FolderBrowse('选择文件夹',size=(8,1)),sg.In(key='-input_file_dir-')],
     [sg.FolderBrowse('保存到',size=(8,1)),sg.In(key='-output_file_dir-')],
@@ -36,6 +37,12 @@ while True:
         elif values['stringsToXlsx'] == True:
             Log.info('stringsToXlsx')
             SX.startConvertStringToXlsx(input_dir,output_dir+'/xlsx_sources')
+        elif values['xlsxToxml'] == True:
+            Log.info('xlsxToxml')
+            Xlsx2Xml.convertFromSingleForm(input_dir,output_dir+'/xml_sources')
+        elif values['xmlToXlsx'] == True:
+            Log.info('xmlToXlsx')
+            Xml2Xlsx.convertToSingleFile(input_dir,output_dir+'/xlsx_sources')
         else:
             Log.info('要转换成什么格式？')
 

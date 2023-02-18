@@ -7,7 +7,7 @@ from StringsFileUtil import StringsFileUtil
 from Log import Log
 import os
 import time
-
+import shutil
 
 def addParser():
     parser = OptionParser()
@@ -41,7 +41,7 @@ def convertFromSingleForm(options, fileDir, targetDir):
         # print(f'---filenames--{filenames}-')
         xlsFilenames = [fi for fi in filenames if fi.endswith(".xlsx")]
         if len(xlsFilenames)==0:
-            Log.info('没有xlsx文件')
+            Log.info('-----没有可用.xlsx文件')
         for file in xlsFilenames:
             Log.info(f"======={file}===")
             xlsFileUtil = XlsFileUtil(fileDir+"/"+file)
@@ -138,9 +138,16 @@ class Xlsx2Strings:
     '工具用来执行方法'
     @staticmethod
     def startConvertXlsxToStrings(fileDir,targetDir):
-        if not os.path.exists(targetDir):
-            os.makedirs(targetDir)
-
         Log.info(f'xlsx路径:{fileDir}')
         Log.info(f'保存路径:{targetDir}')
+        if fileDir == targetDir:
+            Log.info('路径一致会被清空！！！！')
+            return
+        if not os.path.exists(targetDir):
+            os.makedirs(targetDir)
+        else:
+            shutil.rmtree(targetDir)
+            os.makedirs(targetDir)
+
+        
         convertFromSingleForm(addParser(), fileDir,targetDir)

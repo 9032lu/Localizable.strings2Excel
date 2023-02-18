@@ -6,6 +6,7 @@ from StringsFileUtil import StringsFileUtil
 import openpyxl
 import time
 from Log import Log
+import shutil
 # Add command option
 
 
@@ -43,10 +44,16 @@ def convertToSingleFile(stringsDir, targetDir):
     # Create xls sheet
     i = 1
     for _, dirnames, _ in os.walk(stringsDir):
+        if len(dirnames)==0 and i==1:
+            Log.info('-----------没有可用的.lproj文件')
+
         if len(dirnames) == 0 : continue
         Log.info(dirnames)
-        i+=1
+        
         lprojDirs = [di for di in dirnames if di.endswith(".lproj")]
+        if len(dirnames)==0 and i==1:
+            Log.info('-----------没有可用的.lproj文件')
+        i+=1
         for dirname in lprojDirs:
             for _, _, filenames in os.walk(stringsDir+'/'+dirname):
                 stringsFiles = [
@@ -151,9 +158,15 @@ class Strings2Xlsx:
     '工具用来执行方法'
     @staticmethod
     def startConvertStringToXlsx(fileDir,targetDir):
-        if not os.path.exists(targetDir):
-            os.makedirs(targetDir)
-
         Log.info(f'xlsx路径:{fileDir}')
         Log.info(f'保存路径:{targetDir}')
+        if fileDir == targetDir:
+            Log.info('路径一致会被清空！！！！')
+            return
+        if not os.path.exists(targetDir):
+            os.makedirs(targetDir)
+        else:
+            shutil.rmtree(targetDir)
+            os.makedirs(targetDir)
+
         convertToSingleFile(fileDir,targetDir)

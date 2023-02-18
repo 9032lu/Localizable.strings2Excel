@@ -7,7 +7,7 @@ from StringsFileUtil import StringsFileUtil
 from Log import Log
 import os
 import time
-
+import shutil
 
 def addParser():
     parser = OptionParser()
@@ -22,7 +22,7 @@ def addParser():
 
     parser.add_option("-e", "--excelStorageForm",
                       type="string",
-                      default="multiple",
+                      default="single",
                       help="The excel(.xls) file storage forms including single(single file), multiple(multiple files), default is multiple.",
                       metavar="excelStorageForm")
 
@@ -31,27 +31,35 @@ def addParser():
                       metavar="additional")
 
     (options, args) = parser.parse_args()
-    Log.info("options: %s, args: %s" % (options, args))
+    # Log.info("options: %s, args: %s" % (options, args))
 
     return options
 
 
 def convertFromSingleForm(options, fileDir, targetDir):
     for _, _, filenames in os.walk(fileDir):
-        xlsFilenames = [fi for fi in filenames if fi.endswith(".xls")]
+        xlsFilenames = [fi for fi in filenames if fi.endswith(".xlsx")]
+        if len(xlsFilenames)==0:
+            Log.info('-------没有可用.xlsx')
         for file in xlsFilenames:
             xlsFileUtil = XlsFileUtil(fileDir+"/"+file)
             table = xlsFileUtil.getTableByIndex(0)
-            firstRow = table.row_values(0)
-            keys = table.col_values(0)
-            del keys[0]
+            countryCode = []
+            for r in list(list(table.rows)[0])[1:]:
+                countryCode.append(r.value)
+            keys =[]
+            for r in list(list(table.columns)[0])[1:]:
+                keys.append(r.value)
 
-            for index in range(len(firstRow)):
+            for index in range(len(countryCode)):
                 if index <= 0:
                     continue
-                languageName = firstRow[index]
-                values = table.col_values(index)
-                del values[0]
+                languageName = countryCode[index]
+                # values = table.col_values(index)
+                # del values[0]
+                values=[]
+                for v in list(list(table.columns)[index+1])[1:]:
+                    values.append(v.value)
 
                 if languageName == "zh-Hans":
                     languageName = "zh-rCN"
@@ -59,11 +67,12 @@ def convertFromSingleForm(options, fileDir, targetDir):
                 path = targetDir + "/values-"+languageName+"/"
                 if languageName == 'en':
                     path = targetDir + "/values/"
-                filename = file.replace(".xls", ".xml")
+                filename = file.replace(".xlsx", ".xml")
                 XmlFileUtil.writeToFile(
                     keys, values, path, filename, options.additional)
     print ("Convert %s successfully! you can xml files in %s" % (
         fileDir, targetDir))
+    Log.info('转换完成，速度杠杠的！！！')
 
 
 def convertFromMultipleForm(options, fileDir, targetDir):
@@ -117,9 +126,29 @@ def startConvert(options):
         convertFromMultipleForm(options, fileDir, targetDir)
 
 
-def main():
-    options = addParser()
-    startConvert(options)
+# 脚本执行放开main
+# def main():
+#     options = addParser()
+#     startConvert(options)
 
 
-main()
+# main()
+
+
+class Xlsx2Xml:
+    '工具用来执行方法'
+    @staticmethod
+    def convertFromSingleForm(fileDir,targetDir):
+        Log.info(f'xlsx路径:{fileDir}')
+        Log.info(f'保存路径:{targetDir}')
+        if fileDir == targetDir:
+            Log.info('路径一致会被清空！！！！')
+            return
+
+        if not os.path.exists(targetDir):
+            os.makedirs(targetDir)
+        else:
+            shutil.rmtree(targetDir)
+            os.makedirs(targetDir)
+
+        convertFromSingleForm(addParser(), fileDir,targetDir)
