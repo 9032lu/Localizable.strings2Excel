@@ -46,6 +46,8 @@ def startConvert(options):
 
     for _, _, filenames in os.walk(fileDir):
         stringsFilenames = [fi for fi in filenames if fi.endswith(".strings")]
+        if len(stringsFilenames)==0:
+            Log.info('没有.string文件')
         for filename in stringsFilenames:
             path = fileDir+"/"+filename
             (keys, values) = StringsFileUtil.getKeysAndValues(path)
@@ -61,3 +63,5 @@ def main():
 
 
 main()
+
+

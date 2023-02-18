@@ -19,10 +19,10 @@ class StringsFileUtil:
 
     @staticmethod
     def writeToFile(keys, values, directory, name, additional):
+        # print(f"-------------{directory}--")
         if not os.path.exists(directory):
             os.makedirs(directory)
-
-        Log.info("Creating iOS file:" + directory + name)
+        print("Creating iOS file:" + directory + name)
 
         fo = open(directory + "/" + name, "wb")
 
@@ -35,7 +35,7 @@ class StringsFileUtil:
             key = keys[x].strip()
             value = values[x]
             content = "\"" + key + "\" " + "= " + "\"" + value + "\";\n"
-            fo.write(content)
+            fo.write(content.encode())
 
         if additional is not None:
             fo.write(additional)

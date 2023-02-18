@@ -62,8 +62,8 @@ def convertFromSingleForm(options, fileDir, targetDir):
                 filename = file.replace(".xls", ".xml")
                 XmlFileUtil.writeToFile(
                     keys, values, path, filename, options.additional)
-    print "Convert %s successfully! you can xml files in %s" % (
-        fileDir, targetDir)
+    print ("Convert %s successfully! you can xml files in %s" % (
+        fileDir, targetDir))
 
 
 def convertFromMultipleForm(options, fileDir, targetDir):
@@ -88,22 +88,22 @@ def convertFromMultipleForm(options, fileDir, targetDir):
 
                 XmlFileUtil.writeToFile(
                     keys, values, path, filename, options.additional)
-    print "Convert %s successfully! you can xml files in %s" % (
-        fileDir, targetDir)
+    print ("Convert %s successfully! you can xml files in %s" % (
+        fileDir, targetDir))
 
 
 def startConvert(options):
     fileDir = options.fileDir
     targetDir = options.targetDir
 
-    print "Start converting"
+    print ("Start converting")
 
     if fileDir is None:
-        print "xls files directory can not be empty! try -h for help."
+        print ("xls files directory can not be empty! try -h for help.")
         return
 
     if targetDir is None:
-        print "Target file path can not be empty! try -h for help."
+        print ("Target file path can not be empty! try -h for help.")
         return
 
     targetDir = targetDir + "/xls-files-to-xml_" + \

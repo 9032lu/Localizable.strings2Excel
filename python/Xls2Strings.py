@@ -22,7 +22,7 @@ def addParser():
 
     parser.add_option("-e", "--excelStorageForm",
                       type="string",
-                      default="multiple",
+                      default="single",
                       help="The excel(.xls) file storage forms including single(single file), multiple(multiple files), default is multiple.",
                       metavar="excelStorageForm")
 
@@ -31,31 +31,51 @@ def addParser():
                       metavar="additional")
 
     (options, args) = parser.parse_args()
-    Log.info("options: %s, args: %s" % (options, args))
+    print("options: %s, args: %s" % (options, args))
 
     return options
 
 
 def convertFromSingleForm(options, fileDir, targetDir):
     for _, _, filenames in os.walk(fileDir):
-        xlsFilenames = [fi for fi in filenames if fi.endswith(".xls")]
+        # print(f'---filenames--{filenames}-')
+        xlsFilenames = [fi for fi in filenames if fi.endswith(".xlsx")]
+        if len(xlsFilenames)==0:
+            Log.info('没有xlsx文件')
         for file in xlsFilenames:
+            Log.info(f"======={file}===")
             xlsFileUtil = XlsFileUtil(fileDir+"/"+file)
             table = xlsFileUtil.getTableByIndex(0)
-            firstRow = table.row_values(0)
-            keys = table.col_values(0)
-            del keys[0]
+            countryCode = []
+            for r in list(list(table.rows)[0])[1:]:
+                countryCode.append(r.value)
+            keys =[]
+            for r in list(list(table.columns)[0])[1:]:
+                keys.append(r.value)
 
-            for index in range(len(firstRow)):
-                if index <= 0:
-                    continue
-                languageName = firstRow[index]
-                values = table.col_values(index)
-                del values[0]
+            # print(countryCode)
+            # firstRow =  list(list(table.rows)[0]) 
+            # keys = list(list(table.columns)[0])
+            # print(f"------countryCode-------------{countryCode}")
+            # del keys[0]
+            # print(f"-----------keys--------{keys}")
+            for index in range(len(countryCode)):
+                # if index <= 0:
+                #     continue
+                languageName = countryCode[index]
+                values=[]
+                for v in list(list(table.columns)[index+1])[1:]:
+                    values.append(v.value)
+                # print(f"------{index}--{languageName}--{values}-")
+
+                # values = table.col_values(index)
+                # del values[0]
+                # print(f"-----options--{options}--")
                 StringsFileUtil.writeToFile(
-                    keys, values, targetDir + "/"+languageName+".lproj/", file.replace(".xls", "")+".strings", options.additional)
-    print "Convert %s successfully! you can see strings file in %s" % (
-        fileDir, targetDir)
+                    keys, values, targetDir + "/"+languageName+".lproj/", file.replace(".xlsx", "")+".strings", options.additional)
+    print ("Convert %s successfully! you can see strings file in %s" % (
+        fileDir, targetDir))
+    Log.info('转换完成，速度杠杠的！！！')
 
 
 def convertFromMultipleForm(options, fileDir, targetDir):
@@ -77,22 +97,22 @@ def convertFromMultipleForm(options, fileDir, targetDir):
                 if options.additional is not None:
                     iosFileManager.write(options.additional)
                 iosFileManager.close()
-    print "Convert %s successfully! you can see strings file in %s" % (
-        fileDir, targetDir)
+    Log.info ("Convert %s successfully! you can see strings file in %s" % (
+        fileDir, targetDir))
 
 
 def startConvert(options):
     fileDir = options.fileDir
     targetDir = options.targetDir
 
-    print "Start converting"
-
+    print ("Start converting")
+    print(f"===={options.excelStorageForm}==")
     if fileDir is None:
-        print "xls files directory can not be empty! try -h for help."
+        print ("xls files directory can not be empty! try -h for help.")
         return
 
     if targetDir is None:
-        print "Target file directory can not be empty! try -h for help."
+        print ("Target file directory can not be empty! try -h for help.")
         return
 
     targetDir = targetDir + "/xls-files-to-strings_" + \
@@ -105,10 +125,22 @@ def startConvert(options):
     else:
         convertFromMultipleForm(options, fileDir, targetDir)
 
+# 脚本执行放开main
+# def main():
+#     options = addParser()
+#     startConvert(options)
 
-def main():
-    options = addParser()
-    startConvert(options)
+
+# main()
 
 
-main()
+class Xlsx2Strings:
+    '工具用来执行方法'
+    @staticmethod
+    def startConvertXlsxToStrings(fileDir,targetDir):
+        if not os.path.exists(targetDir):
+            os.makedirs(targetDir)
+
+        Log.info(f'xlsx路径:{fileDir}')
+        Log.info(f'保存路径:{targetDir}')
+        convertFromSingleForm(addParser(), fileDir,targetDir)

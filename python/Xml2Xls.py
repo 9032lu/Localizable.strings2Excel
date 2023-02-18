@@ -51,8 +51,8 @@ def convertToMultipleFiles(fileDir, targetDir):
                         ws.write(keyIndex, 1, value)
             filePath = destDir + "/" + getCountryCode(dirname) + ".xls"
             workbook.save(filePath)
-    print "Convert %s successfully! you can see xls file in %s" % (
-        fileDir, destDir)
+    print ("Convert %s successfully! you can see xls file in %s" % (
+        fileDir, destDir))
 
 
 def convertToSingleFile(fileDir, targetDir):
@@ -88,8 +88,8 @@ def convertToSingleFile(fileDir, targetDir):
                                     ws.write(x+1, index + 1, value)
                             index += 1
                         workbook.save(filePath)
-    print "Convert %s successfully! you can see xls file in %s" % (
-        fileDir, destDir)
+    print ("Convert %s successfully! you can see xls file in %s" % (
+        fileDir, destDir))
 
 
 def genDestDir(targetDir):
@@ -112,14 +112,14 @@ def startConvert(options):
     fileDir = options.fileDir
     targetDir = options.targetDir
 
-    print "Start converting"
+    print ("Start converting")
 
     if fileDir is None:
-        print "strings.xml files directory can not be empty! try -h for help."
+        print ("strings.xml files directory can not be empty! try -h for help.")
         return
 
     if targetDir is None:
-        print "Target file path can not be empty! try -h for help."
+        print ("Target file path can not be empty! try -h for help.")
         return
 
     if options.excelStorageForm == "single":
