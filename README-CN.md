@@ -138,3 +138,9 @@ Convert successfully! you can see xml files in examples/output//strings-files-to
 - [qiusuo8](https://github.com/qiusuo8)
 - [light-bo](https://github.com/light-bo)
 - [bryant1410](https://github.com/bryant1410)
+
+
+
+## MARK ios  练手
+1、iOS 在python3 环境运行，可完成Xlsx和Strings互转， 需要打开main()函数
+2、终端 运行 python -m pysimplegui-exemaker.pysimplegui-exemaker，打开exe生成器，选择 xlsx2StringUi.py 能生成exe可执行程序
