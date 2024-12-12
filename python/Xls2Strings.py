@@ -145,9 +145,9 @@ class Xlsx2Strings:
             return
         if not os.path.exists(targetDir):
             os.makedirs(targetDir)
-        else:
-            shutil.rmtree(targetDir)
-            os.makedirs(targetDir)
+        # else:
+            # shutil.rmtree(targetDir)
+            # os.makedirs(targetDir)
 
         
         convertFromSingleForm(addParser(), fileDir,targetDir)

@@ -6,6 +6,7 @@ from Log import Log
 import codecs
 import re
 import io
+import shutil
 
 
 def removeComments(s):
@@ -27,14 +28,14 @@ class StringsFileUtil:
         fo = open(directory + "/" + name, "wb")
 
         for x in range(len(keys)):
-            if values[x] is None or values[x] == '':
+            if values[x] is None or values[x] is None or values[x] == '':
                 Log.error("Key:" + keys[x] +
                           "\'s value is None. Index:" + str(x + 1))
                 continue
 
             key = keys[x].strip()
             value = values[x]
-            content = "\"" + key + "\" " + "= " + "\"" + value + "\";\n"
+            content = "\"" + str(key) + "\" " + "= " + "\"" + str(value) + "\";\n"
             fo.write(content.encode())
 
         if additional is not None:
